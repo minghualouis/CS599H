@@ -6,6 +6,7 @@ from nltk import word_tokenize
 from nltk.corpus import stopwords
 import ast
 import string
+from nltk.probability import FreqDist
 
 def filter_stopwords(text):
     all_stopwords = stopwords.words('english')
@@ -38,11 +39,12 @@ if __name__ == '__main__':
     # stemming with Porter stemmer
     porter = nltk.PorterStemmer()
     text_after_stemming = [porter.stem(t) for t in text_without_sw]
-    unique_text_after_stemming = list(set(text_after_stemming))
-    print(unique_text_after_stemming)
+#     unique_text_after_stemming = list(set(text_after_stemming))
+#     print(unique_text_after_stemming)
     
-    
-    
+    # build frequency distribution
+    fdist = FreqDist(text_after_stemming)
+    fdist.tabulate()
     
     
     
