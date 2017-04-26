@@ -45,6 +45,7 @@ if __name__ == '__main__':
     # build frequency distribution
     fdist = FreqDist(text_after_stemming)
     fdist.tabulate()
+    print(fdist)
     
     
     
