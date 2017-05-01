@@ -1,19 +1,18 @@
+
 #!/etc/env python
 """
 This is the Final project of CS599H 
 Authors: Minghua Liu, Olaoluwa Komolafe and Emily Hardy
 """
 
-import nltk
+import nltk, ast, string, sys,requests
 from bs4 import BeautifulSoup
 from urllib import request, error
 from nltk.tokenize import RegexpTokenizer
 from nltk import word_tokenize
 from nltk.corpus import stopwords
-import ast
-import string
 from nltk.probability import FreqDist
-import requests
+
 
 def filter_stopwords(text):
     all_stopwords = stopwords.words('english')
@@ -77,61 +76,82 @@ def handle_foxnews_content(url):
         content += element.get_text().strip()
     return content
 
-if __name__ == '__main__':
 
-    # Getting content from the websites
-    #url = "http://www.slate.com/articles/health_and_science/science/2016/11/standing_rock_shows_why_environmentalists_should_move_beyond_cost_benefit.html"
-    #url = "https://www.nytimes.com/2017/02/07/us/army-approves-construction-of-dakota-access-pipeline.html"
-    #url = "http://www.huffingtonpost.com/entry/rex-tillerson-keystone-pipeline_us_58c21ebae4b0ed71826b8e1a"
-    #url = "http://www.huffingtonpost.com/entry/defiant-as-ever-water-protectors-vow-to-continue-the-fight-against-the-dakota-black-snake-pipeline_us_588a738de4b0303c0752b963?utm_hp_ref=dakota-access-pipeline"
-    #url = "http://www.huffingtonpost.com/entry/obama-dakota-access-pipeline-halt_us_5844882be4b0c68e04817323"
-    #url = "http://www.breitbart.com/news/us-shutting-down-dakota-access-oil-pipeline-protest-camp/"
-    #url = "https://www.washingtonpost.com/news/monkey-cage/wp/2016/09/20/this-is-why-environmentalists-are-targeting-energy-pipelines-like-the-north-dakota-project/?utm_term=.9c78e4ca29af"
-    url = "http://www.foxnews.com/us/2017/03/07/judge-wont-stop-construction-dakota-access-pipeline.html"
+def get_urls(filePath):
+    f = open(filePath)
+    urls = f.readlines()
     
-    if url.startswith("https://www.nytimes.com"):
-        content = handle_nytimes_content(url)
-    elif url.startswith("http://www.slate.com"):
-        content = handle_slate_content(url)
-    elif url.startswith("http://www.huffingtonpost.com"):
-        content = handle_huffingtonpost_content(url)
-    elif url.startswith("http://www.breitbart.com"):
-        content = handle_breitbart_content(url)
-    elif url.startswith("https://www.washingtonpost.com"):
-        content = handle_washingtonpost_content(url)
-    elif url.startswith("http://www.foxnews.com"):
-        content = handle_foxnews_content(url)
-    # Confirm the content, for debug
-#     print("This is the content: {0}".format(content))
+    dated_links = list()
 
-    # tokenize the string object
-    tokenizer = RegexpTokenizer(r'\w+')
-    tokens = tokenizer.tokenize(content)
-#     tokens = word_tokenize(content) # use above tokenization cause it will better handle the punctuations
-    
-    # filter out punctuation
-#     print(string.punctuation)
-#     punctuations = list(string.punctuation)
-#     punctuations.append("”")
-#     punctuations.append("“")
-#     tokens = [word for word in tokens if word not in punctuations]
-    
-    # creating NLTK text object
-    text = nltk.Text(tokens)
-    
-    # filter out stopwords
-    text_without_sw = filter_stopwords(text)
-    
-    # stemming with Porter stemmer
-    porter = nltk.PorterStemmer()
-    text_after_stemming = [porter.stem(t) for t in text_without_sw]
-    
-    # build frequency distribution
-    fdist = FreqDist(text_after_stemming)
-    fdist.tabulate()
-    print(fdist)
-    
-    
-    
-    
-    
+    for date_line in urls:
+        line = date_line.split("\t")
+        sentence = nltk.sent_tokenize(line[1])
+        date = nltk.sent_tokenize(line[0])
+        dated_links +=[(date,sentence)]
+    return dated_links  
+  
+  
+filein =  r"test_link.txt"
+fileout = r"test_link_out.txt"
+out = open(fileout,"w+")
+
+#get links from file
+dated_links = get_urls(filein)
+
+source_words = list()
+
+for (date,link) in dated_links:
+    try:        
+        # Getting content from the websites
+        url = link[0]
+                
+        if url.startswith("https://www.nytimes.com"):
+            content = handle_nytimes_content(url)
+        elif url.startswith("http://www.slate.com"):
+            content = handle_slate_content(url)
+        elif url.startswith("http://www.huffingtonpost.com"):
+            content = handle_huffingtonpost_content(url)
+        elif url.startswith("http://www.breitbart.com"):
+            content = handle_breitbart_content(url)
+        elif url.startswith("https://www.washingtonpost.com"):
+            content = handle_washingtonpost_content(url)
+        elif url.startswith("http://www.foxnews.com"):
+            content = handle_foxnews_content(url)
+        # Confirm the content, for debug
+        #     print("This is the content: {0}".format(content))
+        
+        # tokenize the string object
+        tokenizer = RegexpTokenizer(r'\w+')
+        tokens = tokenizer.tokenize(content)
+        
+          # filter out punctuation
+          #     print(string.punctuation)
+          #     punctuations = list(string.punctuation)
+          #     punctuations.append("”")
+          #     punctuations.append("“")
+          #     tokens = [word for word in tokens if word not in punctuations]
+        
+          # creating NLTK text object
+        text = nltk.Text(tokens)
+        
+          # filter out stopwords
+        text_without_sw = filter_stopwords(text)
+        
+          # stemming with Porter stemmer
+        porter = nltk.PorterStemmer()
+        text_after_stemming = [porter.stem(t) for t in text_without_sw]
+        
+        #add words to combined list of words for source
+        source_words += text_after_stemming
+        
+        print("success:"+ link[0])
+    except Exception as inst:
+         out.write(link[0] + "\n")
+         print("Error:", sys.exc_info()[0])
+         print(inst)
+   
+# build frequency distribution
+fdist = FreqDist(source_words)
+print(fdist)
+
+out.close()  
