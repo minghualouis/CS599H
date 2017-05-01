@@ -87,7 +87,7 @@ def get_urls(filePath):
         line = date_line.split("\t")
         sentence = nltk.sent_tokenize(line[1])
         date = nltk.sent_tokenize(line[0])
-        dated_links +=[("type",date,sentence)]
+        dated_links +=[(date,sentence)]
     return dated_links  
   
   
@@ -95,58 +95,52 @@ filein =  r"test_link.txt"
 fileout = r"test_link_out.txt"
 out = open(fileout,"w+")
 
+#get links from file
 dated_links = get_urls(filein)
 
 source_words = list()
 
-for (type,date,link) in dated_links:
-    try:
-       # if __name__ == '__main__':
-        
+for (date,link) in dated_links:
+    try:        
         # Getting content from the websites
         url = link[0]
-        html = request.urlopen(url).read().decode('utf8')
-        soup = BeautifulSoup(html, "html.parser")
-        script = soup.find_all("script", type="application/ld+json")
-        content = ast.literal_eval(script[0].get_text().strip())['articleBody']
-        
+                
         if url.startswith("https://www.nytimes.com"):
-        content = handle_nytimes_content(url)
-    elif url.startswith("http://www.slate.com"):
-        content = handle_slate_content(url)
-    elif url.startswith("http://www.huffingtonpost.com"):
-        content = handle_huffingtonpost_content(url)
-    elif url.startswith("http://www.breitbart.com"):
-        content = handle_breitbart_content(url)
-    elif url.startswith("https://www.washingtonpost.com"):
-        content = handle_washingtonpost_content(url)
-    elif url.startswith("http://www.foxnews.com"):
-        content = handle_foxnews_content(url)
-    # Confirm the content, for debug
-#     print("This is the content: {0}".format(content))
-
-    # tokenize the string object
-    tokenizer = RegexpTokenizer(r'\w+')
-    tokens = tokenizer.tokenize(content)
-#     tokens = word_tokenize(content) # use above tokenization cause it will better handle the punctuations
-    
-    # filter out punctuation
-#     print(string.punctuation)
-  #     punctuations = list(string.punctuation)
-  #     punctuations.append("”")
-  #     punctuations.append("“")
-  #     tokens = [word for word in tokens if word not in punctuations]
-
-      # creating NLTK text object
-      text = nltk.Text(tokens)
-
-      # filter out stopwords
-      text_without_sw = filter_stopwords(text)
-
-      # stemming with Porter stemmer
-      porter = nltk.PorterStemmer()
-      text_after_stemming = [porter.stem(t) for t in text_without_sw]
-    
+            content = handle_nytimes_content(url)
+        elif url.startswith("http://www.slate.com"):
+            content = handle_slate_content(url)
+        elif url.startswith("http://www.huffingtonpost.com"):
+            content = handle_huffingtonpost_content(url)
+        elif url.startswith("http://www.breitbart.com"):
+            content = handle_breitbart_content(url)
+        elif url.startswith("https://www.washingtonpost.com"):
+            content = handle_washingtonpost_content(url)
+        elif url.startswith("http://www.foxnews.com"):
+            content = handle_foxnews_content(url)
+        # Confirm the content, for debug
+        #     print("This is the content: {0}".format(content))
+        
+        # tokenize the string object
+        tokenizer = RegexpTokenizer(r'\w+')
+        tokens = tokenizer.tokenize(content)
+        
+          # filter out punctuation
+          #     print(string.punctuation)
+          #     punctuations = list(string.punctuation)
+          #     punctuations.append("”")
+          #     punctuations.append("“")
+          #     tokens = [word for word in tokens if word not in punctuations]
+        
+          # creating NLTK text object
+        text = nltk.Text(tokens)
+        
+          # filter out stopwords
+        text_without_sw = filter_stopwords(text)
+        
+          # stemming with Porter stemmer
+        porter = nltk.PorterStemmer()
+        text_after_stemming = [porter.stem(t) for t in text_without_sw]
+        
         #add words to combined list of words for source
         source_words += text_after_stemming
         
