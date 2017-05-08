@@ -194,21 +194,11 @@ if __name__ == '__main__':
                 content = handle_washingtonpost_content(url)
             elif url.startswith("http://www.foxnews.com"):
                 content = handle_foxnews_content(url)
-            # Confirm the content, for debug
-            #     print("This is the content: {0}".format(content))
             
             # tokenize the string object
             tokenizer = RegexpTokenizer(r'\w+')
             tokens = tokenizer.tokenize(content)
-            
-            # filter out punctuation
-            #     print(string.punctuation)
-            #     punctuations = list(string.punctuation)
-            #     punctuations.append("”")
-            #     punctuations.append("“")
-            #     tokens = [word for word in tokens if word not in punctuations]
-            
-            # creating NLTK text object
+ 
             text = nltk.Text(tokens)
             
             # filter out stopwords
@@ -230,19 +220,11 @@ if __name__ == '__main__':
     # build frequency distribution
     fdist = FreqDist(source_words)
     list_for_wc = fdist.most_common(100)
-#     print(list_for_wc)
-    new_fdist = FreqDist(dict(list_for_wc))
-#     print(new_fdist.most_common(10))
 
-    #list_for_cloud = [(k,v) for (k,v) in fdist.items() if v > 1]  # use most_common() instead
-#     print(list_for_cloud)
-    # use WordCloud lib(need to install with pip)
-    # https://amueller.github.io/word_cloud/
-    # https://github.com/amueller/word_cloud/
+    new_fdist = FreqDist(dict(list_for_wc))
+
     wc = WordCloud()
-#     wc.generate_from_frequencies(new_fdist)
-#     plt.imshow(wc, interpolation='bilinear')
-#     plt.axis("off")
+
     wc = WordCloud(max_font_size=40).generate_from_frequencies(new_fdist)
     plt.figure()
     plt.imshow(wc, interpolation="bilinear")
