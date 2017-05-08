@@ -18,11 +18,27 @@ import matplotlib.pyplot as plt
 
 
 def filter_stopwords(text):
+    """
+    This function filters out the stop words
+    
+    :return: a list of words
+    :rtype: a list of words without stop words
+    :raise: currently no exception for simplicity
+    """
     all_stopwords = stopwords.words('english')
     content_without_sw = [w for w in text if w.lower() not in all_stopwords]
     return content_without_sw
 
 def handle_nytimes_content(url):
+    """
+    This function handles requests to NY Times
+    
+    :param a string of url
+    :type string
+    :return: content of the html
+    :rtype: string 
+    :raise: currently no exception for simplicity
+    """
     q = requests.get(url)
     soup = BeautifulSoup(q.text, "html.parser")
     p_set = soup.find_all("p", class_= "story-body-text story-content")
@@ -33,6 +49,15 @@ def handle_nytimes_content(url):
     
     
 def handle_slate_content(url):
+    """
+    This function handles requests to slate.com
+    
+    :param a string of url
+    :type string
+    :return: content of the html
+    :rtype: string 
+    :raise: currently no exception for simplicity
+    """
     html = request.urlopen(url).read().decode('utf8')
     soup = BeautifulSoup(html, "html.parser")
     script = soup.find_all("script", type="application/ld+json")
@@ -40,6 +65,15 @@ def handle_slate_content(url):
     return content
 
 def handle_huffingtonpost_content(url):
+    """
+    This function handles requests to huffington post
+    
+    :param a string of url
+    :type string
+    :return: content of the html
+    :rtype: string 
+    :raise: currently no exception for simplicity
+    """
     req = requests.Request('GET', url, headers={'Accept-Encoding': 'gzip, deflate, sdch'})
     r = req.prepare()
 #     print(req.prepare())
@@ -53,6 +87,15 @@ def handle_huffingtonpost_content(url):
     return content
     
 def handle_breitbart_content(url):
+    """
+    This function handles requests to breitbart.com
+    
+    :param a string of url
+    :type string
+    :return: content of the html
+    :rtype: string 
+    :raise: currently no exception for simplicity
+    """
     html = request.urlopen(url).read().decode('utf8')
     soup = BeautifulSoup(html, "html.parser")
     p_set = soup.find_all("p")
@@ -62,6 +105,15 @@ def handle_breitbart_content(url):
     return content
 
 def handle_washingtonpost_content(url):
+    """
+    This function handles requests to washington post
+    
+    :param a string of url
+    :type string
+    :return: content of the html
+    :rtype: string 
+    :raise: currently no exception for simplicity
+    """
     html = request.urlopen(url).read().decode('utf8')
     soup = BeautifulSoup(html, "html.parser")
     p_set = soup.find_all("article")
@@ -71,6 +123,15 @@ def handle_washingtonpost_content(url):
     return content
 
 def handle_foxnews_content(url):
+    """
+    This function handles requests to fox news
+    
+    :param a string of url
+    :type string
+    :return: content of the html
+    :rtype: string 
+    :raise: currently no exception for simplicity
+    """
     html = request.urlopen(url).read().decode('utf8')
     soup = BeautifulSoup(html, "html.parser")
     p_set = soup.find_all("div", class_="article-text")
@@ -81,6 +142,15 @@ def handle_foxnews_content(url):
 
 
 def get_urls(filePath):
+    """
+    This function read links from the file
+    
+    :param path of the file
+    :type string
+    :return: all links read from the file
+    :rtype: list 
+    :raise: IndexError if file is not tab delimited
+    """
     f = open(filePath)
     urls = f.readlines()
     
