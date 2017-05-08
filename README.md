@@ -22,4 +22,4 @@ The tool requires the installation of python library wordcloud, NLTK, matplotlib
 
 # Limitation
 
-When developing the tool, we encountered 403 error that occurred when using some links from most of the provided URLs. While working on the solutions, we figured how to solve the error by using requests object. The solution works for most of the URLs except some links from washington post. Currently only 16/112 URLs cannot be processed with the tool. It seems some links from washington post are being very "persistent" thus won't be correctly handled via the current solution and can be optimized in the future work.
+When developing the tool, we encountered 403 error that occurred when using some links from most of the provided URLs. While working on the solutions, we figured how to solve the error by using requests object. The solution works for most of the URLs except some links from washington post. Currently only 14% (16/112) URLs cannot be processed with the tool (all from washington post). It seems some links from washington post are being very "persistent" thus won't be correctly handled via the current solution and can be optimized in the future work.
