@@ -88,7 +88,11 @@ def get_urls(filePath):
 
     for date_line in urls:
         line = date_line.split("\t")
-        sentence = nltk.sent_tokenize(line[1])
+        sentence = ""
+        try:
+            sentence = nltk.sent_tokenize(line[1])
+        except IndexError:
+            print("error:{}".format( sentence))
         date = nltk.sent_tokenize(line[0])
         dated_links +=[(date,sentence)]
     return dated_links  
