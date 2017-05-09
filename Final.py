@@ -94,8 +94,8 @@ def get_urls(filePath):
     return dated_links  
   
 if __name__ == '__main__':
-    filein =  r"test_link.txt"
-    fileout = r"test_link_out.txt"
+    filein =  r"link_input.txt"
+    fileout = r"link_error_out.txt"
     out = open(fileout,"w+")
     
     #get links from file
@@ -150,7 +150,7 @@ if __name__ == '__main__':
             print("success:"+ link[0])
         except Exception as inst:
             out.write(link[0] + "\n")
-            print("Error:", sys.exc_info()[0])
+            print("Error:"+ link[0])
             print(inst)
        
     # build frequency distribution
@@ -160,6 +160,8 @@ if __name__ == '__main__':
     new_fdist = FreqDist(dict(list_for_wc))
 #     print(new_fdist.most_common(10))
 
+    out.close()  
+    
     #list_for_cloud = [(k,v) for (k,v) in fdist.items() if v > 1]  # use most_common() instead
 #     print(list_for_cloud)
     # use WordCloud lib(need to install with pip)
@@ -175,4 +177,4 @@ if __name__ == '__main__':
     plt.axis("off")
     plt.show()
     print("End...")
-    out.close()  
+    
