@@ -168,8 +168,8 @@ def get_urls(filePath):
     return dated_links  
   
 if __name__ == '__main__':
-    filein =  r"test_link.txt"
-    fileout = r"test_link_out.txt"
+    filein =  r"link_input.txt"
+    fileout = r"link_error_out.txt"
     out = open(fileout,"w+")
     
     #get links from file
@@ -214,9 +214,12 @@ if __name__ == '__main__':
             print("success:"+ link[0])
         except Exception as inst:
             out.write(link[0] + "\n")
-            print("Error:", sys.exc_info()[0])
+            print("Error:"+ link[0])
             print(inst)
        
+    #close error file
+    out.close()  
+    
     # build frequency distribution
     fdist = FreqDist(source_words)
     list_for_wc = fdist.most_common(100)
@@ -231,4 +234,4 @@ if __name__ == '__main__':
     plt.axis("off")
     plt.show()
     print("End...")
-    out.close()  
+    
